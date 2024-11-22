@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosError, AxiosResponse } from 'axios'
 
 enum Gender {
     Female = 'female',
@@ -132,10 +132,17 @@ interface ResponseUsers extends Pagination {
 }
 
 const fetchData = async (): Promise<ResponseUsers[]> => {
-    const response = await axios.get<ResponseUsers[]>(
-        'https://dummyjson.com/users'
-    )
-    const data = response.data
-    return data
+    try {
+        const response: AxiosResponse = await axios.get<ResponseUsers[]>(
+            'https://dummyjson.com/users'
+        )
+        const data = response.data
+        return data
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            throw new Error(error.message)
+        }
+        return []
+    }
 }
 fetchData()
